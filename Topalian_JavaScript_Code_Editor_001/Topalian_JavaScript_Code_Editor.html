@@ -1,0 +1,560 @@
+<!-- Dedicated to God the Father -->
+<!-- All Rights Reserved Christopher Andrew Topalian Copyright 2000-2024 -->
+<!-- https://github.com/ChristopherTopalian -->
+<!-- https://github.com/ChristopherAndrewTopalian -->
+<!-- Topalian_JavaScript_Code_Editor.html -->
+<!-- Version 001 - (2024-07-04) -->
+
+<html>
+<head>
+<title> Topalian JavaScript Code Editor </title>
+
+<style>
+
+body
+{
+    padding: 20px;
+    background-color: rgb(0, 0, 0);
+    font-family: Arial;
+    color: white;
+}
+
+#editorContainer
+{
+    height: 300px;
+}
+
+#codeInput, #codeOutput
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    font-family: Arial;
+    font-size: 24px;
+    font-weight: bold;
+    border: none;
+    resize: none;
+    tab-size: 4;
+    overflow-y: scroll;
+}
+
+#codeInput
+{
+    background-color: rgba(0, 0, 0, 0);
+    /* hide text in textarea */
+    color: transparent;
+    caret-color: white;
+    z-index: 2;
+    overflow-y: scroll;
+}
+
+#codeOutput
+{
+    /* if font size increaes, decrease top pos corrospondingly */
+    top: -22px;
+    background-color: rgb(0, 0, 0);
+    color: white;
+    white-space: pre-wrap;
+    word-break: break-word;
+    /* make div not selectable */
+    pointer-events: none;
+    overflow-y: scroll;
+    z-index: 1;
+}
+
+.pink
+{
+    color: pink;
+}
+
+.skyblue
+{
+    color: skyblue;
+}
+
+.yellow
+{
+    color: yellow;
+}
+
+.lightGray
+{
+    color: rgb(200, 200, 200);
+}
+
+.magenta
+{
+    color: rgb(255, 138, 255);
+}
+
+.objects
+{
+    color: rgb(155, 195, 255);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id = "editorContainer">
+    <textarea id = "codeInput"></textarea>
+    <pre id = "codeOutput"></pre>
+</div>
+
+<script>
+
+let theEvents =
+[
+    'onabort',
+    'onafterprint',
+    'onanimationend',
+    'onanimationiteration',
+    'onanimationstart',
+    'onbeforeprint',
+    'onbeforeunload',
+    'onblur',
+    'oncanplay',
+    'oncanplaythrough',
+    'onchange',
+    'onclick',
+    'oncontextmenu',
+    'oncopy',
+    'oncut',
+    'ondblclick',
+    'ondrag',
+    'ondragend',
+    'ondragenter',
+    'ondragleave',
+    'ondragover',
+    'ondragstart',
+    'ondrop',
+    'ondurationchange',
+    'onemptied',
+    'onended',
+    'onerror',
+    'onfocus',
+    'onfocusin',
+    'onfocusout',
+    'onfullscreenchange',
+    'onfullscreenerror',
+    'onhashchange',
+    'oninput',
+    'oninvalid',
+    'onkeydown',
+    'onkeypress',
+    'onkeyup',
+    'onLine',
+    'onload',
+    'onloadeddata',
+    'onloadedmetadata',
+    'onloadstart',
+    'onmessage',
+    'onmousedown',
+    'onmouseenter',
+    'onmouseleave',
+    'onmousemove',
+    'onmouseover',
+    'onmouseout',
+    'onmouseup',
+    'onmousewheel',
+    'onoffline',
+    'ononline',
+    'onopen',
+    'onpagehide',
+    'onpageshow',
+    'onpaste',
+    'onpause',
+    'onplay',
+    'onplaying',
+    'onpopstate',
+    'onprogress',
+    'onratechange',
+    'onresize',
+    'onreset',
+    'onscroll',
+    'onsearch',
+    'onseeked',
+    'onseeking',
+    'onselect',
+    'onshow',
+    'onstalled',
+    'onstorage',
+    'onsubmit',
+    'onsuspend',
+    'ontimeupdate',
+    'ontoggle',
+    'ontouchcancel',
+    'ontouchend',
+    'ontouchmove',
+    'ontouchstart',
+    'ontransitionend',
+    'onunload',
+    'onvolumechange',
+    'onwaiting',
+    'onwheel'
+];
+
+let theFunctions =
+[
+    'abs',
+    'acos',
+    'acosh',
+    'adoptNode',
+    'alert',
+    'appendChild',
+    'asin',
+    'asinh',
+    'assert',
+    'assert',
+    'assign',
+    'atan',
+    'atan2',
+    'atanh',
+    'atob',
+    'back',
+    'blur',
+    'btoa',
+    'cbrt',
+    'ceil',
+    'charAt',
+    'charCodeAt',
+    'clear',
+    'clearInterval',
+    'clearTimeout',
+    'clearWatch',
+    'click',
+    'close',
+    'closest',
+    'clz32',
+    'compile',
+    'concat',
+    'confirm',
+    'constructor',
+    'contains',
+    'copyWithin',
+    'cos',
+    'cosh',
+    'count',
+    'createAttribute',
+    'createComment',
+    'createDocumentFragment',
+    'createElement',
+    'createEvent',
+    'createTextNode',
+    'decodeURI',
+    'decodeURIComponent',
+    'encodeURI',
+    'encodeURIComponent',
+    'endsWith',
+    'entries',
+    'error',
+    'escape',
+    'eval',
+    'every',
+    'exec',
+    'execCommand',
+    'exitFullscreen',
+    'exp',
+    'expm1',
+    'fill',
+    'filter',
+    'find',
+    'fintIndex',
+    'floor',
+    'focus',
+    'forEach',
+    'forward',
+    'from',
+    'fromCharCode',
+    'fround',
+    'fullscreenEnabled',
+    'getDate',
+    'getDay',
+    'getAttribute',
+    'getAttributeNode',
+    'getBoundingClientRect',
+    'getComputedStyle',
+    'getCurrentPosition',
+    'getElementById',
+    'getElementsByClassName',
+    'getElementsByName',
+    'getElementsByTagName',
+    'getFullYear',
+    'getHours',
+    'getItem',
+    'getMilliseconds',
+    'getMinutes',
+    'getModifierState',
+    'getMonth',
+    'getNamedItem',
+    'getSeconds',
+    'getSelection',
+    'getTargetRanges',
+    'getTime',
+    'getTimezoneOffset',
+    'getUTCDate',
+    'getUTCDay',
+    'getUTCFullYear',
+    'getUTCHours',
+    'getUTCMilliseconds',
+    'getUTCMinutes',
+    'getUTCMonth',
+    'getUTCSeconds',
+    'getYear',
+    'go',
+    'group',
+    'groupCollapsed',
+    'groupEnd',
+    'hasAttribute',
+    'hasAttributes',
+    'hasChildNodes',
+    'hasFocus',
+    'importNode',
+    'includes',
+    'indexOf',
+    'info',
+    'insertAdjacentElement',
+    'insertAdjacentHTML',
+    'insertAdjacentText',
+    'insertBefore',
+    'isArray',
+    'isDefaultNamespace',
+    'isEqualNode',
+    'isFinite',
+    'isInteger',
+    'isNaN',
+    'isSafeInteger',
+    'isSameNode',
+    'isSupported',
+    'item',
+    'join',
+    'key',
+    'keys',
+    'lastIndexOf',
+    'localeCompare',
+    'log',
+    'log10',
+    'log1p',
+    'log2',
+    'map',
+    'match',
+    'matches',
+    'matchMedia',
+    'max',
+    'min',
+    'moveBy',
+    'moveTo',
+    'namedItem',
+    'normalize',
+    'normalizeDocument',
+    'now',
+    'Number',
+    'open',
+    'parse',
+    'parseFloat',
+    'parseInt',
+    'pop',
+    'preventDefault',
+    'print',
+    'push',
+    'querySelector',
+    'querySelectorAll',
+    'random',
+    'reduce',
+    'reduceRight',
+    'reload',
+    'remove',
+    'removeAttribute',
+    'removeAttributeNode',
+    'removeChild',
+    'removeEventListener',
+    'removeItem',
+    'repeat',
+    'replace',
+    'replaceChild',
+    'requestAnimationFrame',
+    'requestFullscreen',
+    'resizeBy',
+    'resizeTo',
+    'reverse',
+    'round',
+    'pow',
+    'prompt',
+    'removeEventListener',
+    'removeNamedItem',
+    'renameNode',
+    'scroll',
+    'scrollBy',
+    'scrollIntoView',
+    'scrollTo',
+    'search',
+    'setAttribute',
+    'setAttributeNode',
+    'setDate',
+    'setFullYear',
+    'setHours',
+    'setInterval',
+    'setItem',
+    'setMilliseconds',
+    'setMinutes',
+    'setMonth',
+    'setNamedItem',
+    'setSeconds',
+    'setTime',
+    'setTimeout',
+    'setUTCDate',
+    'setUTCFullYear',
+    'setUTCHours',
+    'setUTCMilliseconds',
+    'setUTCMinutes',
+    'setUTCMonth',
+    'setUTCSecond',
+    'setYear',
+    'shift',
+    'sign',
+    'sin',
+    'sinh',
+    'slice',
+    'some',
+    'sort',
+    'splice',
+    'split',
+    'startsWith',
+    'String',
+    'stop',
+    'stopImmediatePropagation',
+    'stopPropagation',
+    'stringify',
+    'substr',
+    'substring',
+    'table',
+    'tan',
+    'tanh',
+    'test',
+    'time',
+    'timeEnd',
+    'toDateString',
+    'toGMTString',
+    'toExponential',
+    'toFixed',
+    'toJSON',
+    'toISOString',
+    'toLocaleDateString',
+    'toLocaleLowerCase',
+    'toLocaleString',
+    'toLocaleTimeString',
+    'toLocaleUpperCase',
+    'toLowerCase',
+    'toPrecision',
+    'toString',
+    'toTimeString',
+    'toUpperCase',
+    'toUTCString',
+    'trace',
+    'trim',
+    'trunc',
+    'unescape',
+    'unshift',
+    'UTC',
+    'valueOf',
+    'warn',
+    'watchPosition',
+    'write',
+    'writeln'
+];
+
+let theObjects = 
+[
+    'console',
+    'document',
+    'window',
+    'Date',
+    'Math',
+    'JSON',
+];
+
+let codeInput = document.getElementById('codeInput');
+
+let codeOutput = document.getElementById('codeOutput');
+
+function escapeHtml(code)
+{
+    return code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function highlightCode()
+{
+    let code = escapeHtml(codeInput.value);
+
+    let functionPattern = new RegExp(`\\b(${theFunctions.join('|')})\\b`, 'g');
+
+    let eventPattern = new RegExp(`\\b(${theEvents.join('|')})\\b`, 'g');
+
+    let objectPattern = new RegExp(`\\b(${theObjects.join('|')})\\b`, 'g');
+
+    let highlightedCode = code.replace(functionPattern, '<span style="color: yellow;">$1</span>')
+
+    // events
+    .replace(eventPattern, '<span class="flowControl">$1</span>')
+
+    // objects
+    .replace(objectPattern, '<span class="objects">$1</span>')
+
+    // function
+    .replace(/\bfunction\b/g, '<span class="pink">function</span>')
+
+    // let
+    .replace(/\blet\b/g, '<span class="pink">let</span>')
+
+    // new
+    .replace(/\bnew\b/g, '<span class="pink">new</span>')
+
+    // digits
+    .replace(/\d/g, '<span class="lightGray">$&</span>')
+
+    // flowControl
+    .replace(/\b(if|else|do|while|for|forEach|break|continue)\b/g, '<span class="magenta">$1</span>');
+
+    codeOutput.innerHTML = highlightedCode;
+}
+
+codeInput.addEventListener('input', highlightCode);
+codeInput.addEventListener('scroll', function()
+{
+    codeOutput.scrollTop = this.scrollTop;
+});
+
+highlightCode();
+
+codeInput.addEventListener("keydown", function(event)
+{
+    if (event.key === "Tab")
+    {
+        // prevent default tab behavior
+        event.preventDefault();
+
+        // get cursor position
+        let start = this.selectionStart;
+        let end = this.selectionEnd;
+
+        // insert 4 spaces at cursor position
+        this.value = this.value.substring(0, start) + "    " + this.value.substring(end);
+
+        // move cursor position forward by 4 spaces
+        this.selectionStart = this.selectionEnd = start + 4;
+    }
+
+    highlightCode();
+});
+
+</script>
+
+</body>
+
+</html>
+
